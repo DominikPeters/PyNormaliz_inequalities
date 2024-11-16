@@ -4,67 +4,90 @@ from PyNormaliz import Cone
 import itertools
 
 class Variable:
+    """Represents a variable in an inequality system."""
+    
     _counter: int = 0
 
     def __init__(self) -> None:
+        """Initializes a new variable with a unique ID."""
         Variable._counter += 1
         self.id: int = Variable._counter
 
     @classmethod
     def reset_counter(cls) -> None:
+        """Resets the counter for variable IDs."""
         cls._counter = 0
 
     def __add__(self, other: Union['Variable', 'Expression', int, float]) -> 'Expression':
+        """Adds a variable or expression to this variable."""
         return Expression({self: 1}) + other
 
     def __radd__(self, other: Union[int, float]) -> 'Expression':
+        """Adds a variable or expression to this variable (reversed operands)."""
         return Expression({self: 1}) + other
 
     def __mul__(self, other: Union[int, float]) -> 'Expression':
+        """Multiplies this variable by a scalar."""
         return Expression({self: other})
 
     def __rmul__(self, other: Union[int, float]) -> 'Expression':
+        """Multiplies this variable by a scalar (reversed operands)."""
         return Expression({self: other})
 
     def __sub__(self, other: Union['Variable', 'Expression', int, float]) -> 'Expression':
+        """Subtracts a variable or expression from this variable."""
         return self + (-1 * other)
 
     def __rsub__(self, other: Union[int, float]) -> 'Expression':
+        """Subtracts this variable from a scalar (reversed operands)."""
         return (-1 * self) + other
 
     def __neg__(self) -> 'Expression':
+        """Negates this variable."""
         return Expression({self: -1})
 
     def __ge__(self, other: Union['Variable', 'Expression', int, float]) -> 'Inequality':
+        """Creates a greater-than-or-equal-to inequality with this variable."""
         return Expression({self: 1}) >= other
 
     def __gt__(self, other: Union['Variable', 'Expression', int, float]) -> 'Inequality':
+        """Creates a greater-than inequality with this variable."""
         return Expression({self: 1}) > other
 
     def __le__(self, other: Union['Variable', 'Expression', int, float]) -> 'Inequality':
+        """Creates a less-than-or-equal-to inequality with this variable."""
         return Expression({self: 1}) <= other
 
     def __lt__(self, other: Union['Variable', 'Expression', int, float]) -> 'Inequality':
+        """Creates a less-than inequality with this variable."""
         return Expression({self: 1}) < other
 
     def __eq__(self, other: Union['Variable', 'Expression', int, float]) -> bool:
+        """Checks if this variable is equal to another variable or expression."""
         return Expression({self: 1}) == other
 
     def __hash__(self) -> int:
+        """Returns the hash of this variable."""
         return hash(self.id)
 
     def __repr__(self) -> str:
+        """Returns the string representation of this variable."""
         return f"Variable({self.id})"
 
     def __str__(self) -> str:
+        """Returns the string representation of this variable."""
         return f"x_{self.id}"
 
 class Expression:
+    """Represents a linear expression involving variables."""
+    
     def __init__(self, coeffs: Dict[Variable, Union[int, float]] = None, constant: Union[int, float] = 0) -> None:
+        """Initializes a new expression with given coefficients and constant term."""
         self.coeffs: Dict[Variable, Union[int, float]] = defaultdict(int, coeffs or {})
         self.constant: Union[int, float] = constant
 
     def __add__(self, other: Union['Expression', Variable, int, float]) -> 'Expression':
+        """Adds an expression, variable, or scalar to this expression."""
         if isinstance(other, (int, float)):
             return Expression(self.coeffs.copy(), self.constant + other)
         elif isinstance(other, Variable):
@@ -80,9 +103,11 @@ class Expression:
             return NotImplemented
 
     def __radd__(self, other: Union[int, float]) -> 'Expression':
+        """Adds an expression, variable, or scalar to this expression (reversed operands)."""
         return self + other
 
     def __mul__(self, other: Union[int, float]) -> 'Expression':
+        """Multiplies this expression by a scalar."""
         if isinstance(other, (int, float)):
             new_coeffs = {var: coeff * other for var, coeff in self.coeffs.items()}
             return Expression(new_coeffs, self.constant * other)
@@ -90,46 +115,60 @@ class Expression:
             return NotImplemented
 
     def __rmul__(self, other: Union[int, float]) -> 'Expression':
+        """Multiplies this expression by a scalar (reversed operands)."""
         return self * other
 
     def __sub__(self, other: Union['Expression', Variable, int, float]) -> 'Expression':
+        """Subtracts an expression, variable, or scalar from this expression."""
         return self + (-1 * other)
 
     def __rsub__(self, other: Union[int, float]) -> 'Expression':
+        """Subtracts this expression from a scalar (reversed operands)."""
         return (-1 * self) + other
 
     def __neg__(self) -> 'Expression':
+        """Negates this expression."""
         return self * -1
 
     def __ge__(self, other: Union['Expression', Variable, int, float]) -> 'Inequality':
+        """Creates a greater-than-or-equal-to inequality with this expression."""
         return Inequality(self - other, '>=')
 
     def __gt__(self, other: Union['Expression', Variable, int, float]) -> 'Inequality':
+        """Creates a greater-than inequality with this expression."""
         return Inequality(self - other, '>')
 
     def __le__(self, other: Union['Expression', Variable, int, float]) -> 'Inequality':
+        """Creates a less-than-or-equal-to inequality with this expression."""
         return Inequality(other - self, '>=')
 
     def __lt__(self, other: Union['Expression', Variable, int, float]) -> 'Inequality':
+        """Creates a less-than inequality with this expression."""
         return Inequality(other - self, '>')
 
     def __eq__(self, other: Union['Expression', Variable, int, float]) -> bool:
+        """Checks if this expression is equal to another expression, variable, or scalar."""
         return Inequality(self - other, '==')
 
     def __repr__(self) -> str:
+        """Returns the string representation of this expression."""
         terms = [f"{coeff}*{var}" for var, coeff in self.coeffs.items() if coeff != 0]
         if self.constant != 0 or not terms:
             terms.append(str(self.constant))
         return " + ".join(terms)
 
     def __str__(self) -> str:
+        """Returns the string representation of this expression."""
         terms = [f"{coeff}{var}" if coeff != 1 else f"{var}" for var, coeff in self.coeffs.items() if coeff != 0]
         if self.constant != 0 or not terms:
             terms.append(str(self.constant))
         return " + ".join(terms)
 
 class Inequality:
+    """Represents an inequality involving expressions."""
+    
     def __init__(self, expr: Expression, op: str) -> None:
+        """Initializes a new inequality with a given expression and operator."""
         self.expr = expr
         self.op = op
         if op == '<':
@@ -140,6 +179,7 @@ class Inequality:
             self.expr = -1 * self.expr
 
     def to_vec(self) -> List[Union[int, float]]:
+        """Converts the inequality to a vector representation."""
         all_variables = Variable._counter  # Get the total number of variables created
         vec = [0] * all_variables  # Initialize vector with zeros for all possible variables
         for i, (var, coeff) in enumerate(self.expr.coeffs.items()):
@@ -148,6 +188,7 @@ class Inequality:
         return vec
 
     def is_satisfied_by(self, values: Dict[Variable, Union[int, float]]) -> bool:
+        """Checks if the inequality is satisfied by given variable values."""
         LHS_value = sum(coeff * values[var] for var, coeff in self.expr.coeffs.items()) + self.expr.constant
         if self.op == '>=':
             return LHS_value >= 0
@@ -159,19 +200,26 @@ class Inequality:
             raise ValueError("Invalid inequality operator", self.op)
 
     def __eq__(self, other: 'Inequality') -> bool:
+        """Checks if this inequality is equal to another inequality."""
         return isinstance(other, Inequality) and self.to_vec() == other.to_vec()
 
     def __repr__(self) -> str:
+        """Returns the string representation of this inequality."""
         return f"{self.expr} {self.op} 0"
 
     def __str__(self) -> str:
+        """Returns the string representation of this inequality."""
         return f"{str(self.expr)} {self.op} 0"
 
 class InequalitySystem:
+    """Manages a system of inequalities and provides methods to interact with PyNormaliz."""
+    
     def __init__(self) -> None:
+        """Initializes a new inequality system."""
         self.inequalities: List[Inequality] = []
 
     def add_inequality(self, inequality: Inequality) -> None:
+        """Adds an inequality to the system."""
         if inequality.op != '==':
             self.inequalities.append(inequality)
         else:
@@ -179,9 +227,11 @@ class InequalitySystem:
             self.inequalities.append(inequality.expr <= 0)
 
     def is_homogeneous(self) -> bool:
+        """Checks if all inequalities in the system are homogeneous."""
         return all(ineq.expr.constant == 0 for ineq in self.inequalities)
 
     def compute_number_of_lattice_points(self, n) -> int:
+        """Computes the number of lattice points in the polyhedron defined by the inequalities."""
         used_vars = {var.id for ineq in self.inequalities for var in ineq.expr.coeffs}
         num_points = 0
         for choice in itertools.combinations_with_replacement(used_vars, n):
@@ -311,6 +361,15 @@ class InequalitySystem:
 ####################
 
 def evaluate_quasipolynomial(qp, n):
+    """Evaluates a quasipolynomial at a given integer value.
+
+    Args:
+        qp (list): The quasipolynomial represented as a list of lists.
+        n (int): The integer value at which to evaluate the quasipolynomial.
+
+    Returns:
+        int: The evaluated value of the quasipolynomial.
+    """
     # e.g. qp == [[384, 640, 408, 124, 18, 1], [135, 297, 234, 86, 15, 1], 384]
     period = len(qp) - 1
     denominator = qp[-1]
