@@ -152,14 +152,14 @@ class Expression:
 
     def __repr__(self) -> str:
         """Returns the string representation of this expression."""
-        terms = [f"{coeff}*{var}" for var, coeff in self.coeffs.items() if coeff != 0]
+        terms = [f"{coeff}*{var}" if coeff != 1 else f"{var}" for var, coeff in self.coeffs.items() if coeff != 0]
         if self.constant != 0 or not terms:
             terms.append(str(self.constant))
         return " + ".join(terms)
 
     def __str__(self) -> str:
         """Returns the string representation of this expression."""
-        terms = [f"{coeff}{var}" if coeff != 1 else f"{var}" for var, coeff in self.coeffs.items() if coeff != 0]
+        terms = [f"{coeff}*{var}" if coeff != 1 else f"{var}" for var, coeff in self.coeffs.items() if coeff != 0]
         if self.constant != 0 or not terms:
             terms.append(str(self.constant))
         return " + ".join(terms)

@@ -24,6 +24,9 @@ class TestVariable(unittest.TestCase):
         self.assertEqual(str(expr), "3*x_2")
 
 class TestExpression(unittest.TestCase):
+    def setUp(self):
+        Variable.reset_counter()
+
     def test_expression_creation(self):
         v1 = Variable()
         v2 = Variable()
@@ -38,11 +41,14 @@ class TestExpression(unittest.TestCase):
         expr = expr1 + expr2
         self.assertEqual(str(expr), "3*x_1 + 3*x_2 + 4")
         expr = expr1 - expr2
-        self.assertEqual(str(expr), "-1*x_1 + 1*x_2 + 2")
+        self.assertEqual(str(expr), "-1*x_1 + x_2 + 2")
         expr = expr1 * 2
         self.assertEqual(str(expr), "2*x_1 + 4*x_2 + 6")
 
 class TestInequality(unittest.TestCase):
+    def setUp(self):
+        Variable.reset_counter()
+
     def test_inequality_creation(self):
         v1 = Variable()
         v2 = Variable()
