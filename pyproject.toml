@@ -4,10 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "PyNormaliz_inequalities"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python package for interacting with PyNormaliz using inequalities."
 authors = [
     { name = "Dominik Peters", email = "mail@dominik-peters.de" }
 ]
 license = { text = "MIT License" }
 dependencies = ["PyNormaliz"]
+readme = "README.md"
