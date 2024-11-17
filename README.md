@@ -3,7 +3,16 @@ Python utility package for interacting with PyNormaliz
 
 ## Installation
 
-To install the package, use pip:
+Normaliz and PyNormaliz must be installed on your system to use this package. You can install these packages using the following commands:
+
+```sh
+git clone https://github.com/Normaliz/Normaliz.git
+cd Normaliz
+./install_normaliz.sh
+./install_pynormaliz.sh
+```
+
+To install this package, use pip:
 
 ```sh
 pip install PyNormaliz_inequalities
