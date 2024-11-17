@@ -1,4 +1,4 @@
-# pynormaliz_inequalities
+# PyNormaliz_inequalities
 Python utility package for interacting with PyNormaliz
 
 ## Installation
@@ -6,7 +6,7 @@ Python utility package for interacting with PyNormaliz
 To install the package, use pip:
 
 ```sh
-pip install pynormaliz_inequalities
+pip install PyNormaliz_inequalities
 ```
 
 ## Usage
@@ -16,7 +16,7 @@ This package provides a convenient interface to PyNormaliz, allowing users to sp
 ### Example 1: Basic Usage
 
 ```python
-from pynormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
+from PyNormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
 
 a = Variable()
 b = Variable()
@@ -33,7 +33,7 @@ print([evaluate_quasipolynomial(quasipolynomial, n) for n in range(10)])
 ### Example 2: Complex Inequalities
 
 ```python
-from pynormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
+from PyNormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
 
 a = Variable()
 b = Variable()
@@ -53,7 +53,7 @@ print([evaluate_quasipolynomial(quasipolynomial, n) for n in range(10)])
 ### Example 3: Using Inequality System
 
 ```python
-from pynormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
+from PyNormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
 
 x = Variable()
 y = Variable()
@@ -68,7 +68,7 @@ print([evaluate_quasipolynomial(quasipolynomial, n) for n in range(10)])
 
 ## Explanation
 
-The `pynormaliz_inequalities` package provides a convenient interface to PyNormaliz, allowing users to specify inequalities in a natural format. It supports creating variables, expressions, and inequalities, and converting them to vector representations suitable for PyNormaliz. The package also includes functionality to construct homogeneous cones and compute Hilbert quasi-polynomials.
+The `PyNormaliz_inequalities` package provides a convenient interface to PyNormaliz, allowing users to specify inequalities in a natural format. It supports creating variables, expressions, and inequalities, and converting them to vector representations suitable for PyNormaliz. The package also includes functionality to construct homogeneous cones and compute Hilbert quasi-polynomials.
 
 The main components of the package are:
 

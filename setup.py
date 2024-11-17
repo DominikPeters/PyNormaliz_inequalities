@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='pynormaliz_inequalities',
+    name='PyNormaliz_inequalities',
     version='0.1.0',
     description='A Python package for interacting with PyNormaliz using inequalities.',
     author='Dominik Peters',
