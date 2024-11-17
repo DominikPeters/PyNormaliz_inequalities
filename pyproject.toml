@@ -10,6 +10,4 @@ authors = [
     { name = "Dominik Peters", email = "mail@dominik-peters.de" }
 ]
 license = { text = "MIT License" }
-
-[project.dependencies]
-PyNormaliz = "*"
+dependencies = ["PyNormaliz"]
