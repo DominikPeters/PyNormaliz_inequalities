@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyNormaliz_inequalities"
+version = "0.1.0"
+description = "A Python package for interacting with PyNormaliz using inequalities."
+authors = [
+    { name = "Dominik Peters", email = "mail@dominik-peters.de" }
+]
+license = { text = "MIT License" }
+
+[project.dependencies]
+PyNormaliz = "*"
