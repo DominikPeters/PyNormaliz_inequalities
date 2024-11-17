@@ -1,5 +1,5 @@
 import unittest
-from PyNormaliz_inequalities.inequalities import Variable, Expression, Inequality, InequalitySystem
+from PyNormaliz_inequalities import Variable, Expression, Inequality, InequalitySystem
 
 class TestVariable(unittest.TestCase):
     def setUp(self):
