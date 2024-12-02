@@ -1,5 +1,10 @@
 # PyNormaliz_inequalities
-Python utility package for interacting with PyNormaliz
+
+[Normaliz](https://github.com/Normaliz/Normaliz) is a tool for various computations in discrete convex geometry. In particular it supports computations in polytopes and polyhedra specified by a system of linear inequalities.
+For example, it allows to compute the Hilbert or Ehrhart series of a polytope or polyhedron, and thereby count the number of integer points in it.
+
+It is possible to interact with Normaliz using the Python package [PyNormaliz](https://github.com/Normaliz/PyNormaliz), but the interface requires users to specify inequalities in a vector format. 
+This package provides a more convenient interface for specifying inequalities in a natural format, and includes utility functions for interacting with PyNormaliz.
 
 ## Installation
 
@@ -20,9 +25,12 @@ pip install PyNormaliz_inequalities
 
 ## Usage
 
-This package provides a convenient interface to PyNormaliz, allowing users to specify inequalities in a natural format. Below are some usage examples:
+The main point of the package is to allow users to specify inequalities in a natural format.
+The main components are `Variable`s that can be combined into `Expression`s and `Inequality`s, which can be collected into an `InequalitySystem`, which can then be passed to PyNormaliz.
 
 ### Example 1: Basic Usage
+
+Let's count the number of integer pairs `(a,b)` with `a + b = n` that satisfy the inequalities `a >= 0`, `b >= 0`, and `a + b >= 1`, as a function of `n`.
 
 ```python
 from PyNormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
