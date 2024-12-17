@@ -28,7 +28,7 @@ pip install PyNormaliz_inequalities
 The main point of the package is to allow users to specify inequalities in a natural format.
 The main components are `Variable`s that can be combined into `Expression`s and `Inequality`s, which can be collected into an `InequalitySystem`, which can then be passed to PyNormaliz.
 
-### Example 1: Basic Usage
+### Example: Basic Usage
 
 Let's count the number of integer pairs `(a,b)` with `a + b = n` that satisfy the inequalities `a >= 0`, `b >= 0`, and `a + b >= 1`, as a function of `n`.
 
@@ -42,42 +42,6 @@ inequalities = InequalitySystem()
 inequalities.add_inequality(a >= 0)
 inequalities.add_inequality(b >= 0)
 inequalities.add_inequality(a + b >= 1)
-
-quasipolynomial = inequalities.construct_homogeneous_cone().HilbertQuasiPolynomial()
-print([evaluate_quasipolynomial(quasipolynomial, n) for n in range(10)])
-```
-
-### Example 2: Complex Inequalities
-
-```python
-from PyNormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
-
-a = Variable()
-b = Variable()
-c = Variable()
-
-inequalities = InequalitySystem()
-inequalities.add_inequality(a >= 0)
-inequalities.add_inequality(b >= 0)
-inequalities.add_inequality(c >= 0)
-inequalities.add_inequality(a > 2*b)
-inequalities.add_inequality(b > c)
-
-quasipolynomial = inequalities.construct_homogeneous_cone().HilbertQuasiPolynomial()
-print([evaluate_quasipolynomial(quasipolynomial, n) for n in range(10)])
-```
-
-### Example 3: Using Inequality System
-
-```python
-from PyNormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
-
-x = Variable()
-y = Variable()
-
-inequalities = InequalitySystem()
-inequalities.add_inequality(x >= 2)
-inequalities.add_inequality(y >= x)
 
 quasipolynomial = inequalities.construct_homogeneous_cone().HilbertQuasiPolynomial()
 print([evaluate_quasipolynomial(quasipolynomial, n) for n in range(10)])
