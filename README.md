@@ -11,7 +11,7 @@ This package provides a more convenient interface for specifying inequalities in
 Normaliz and PyNormaliz must be installed on your system to use this package. You can install these packages using the following commands:
 
 ```sh
-git clone https://github.com/Normaliz/Normaliz.git
+git clone --depth 1 https://github.com/Normaliz/Normaliz.git
 cd Normaliz
 ./install_normaliz.sh
 ./install_pynormaliz.sh
@@ -46,6 +46,54 @@ inequalities.add_inequality(a + b >= 1)
 quasipolynomial = inequalities.construct_homogeneous_cone().HilbertQuasiPolynomial()
 print([evaluate_quasipolynomial(quasipolynomial, n) for n in range(10)])
 ```
+
+### Example: Condorcet Paradox
+
+Let's compute the fraction of anonymous preference profiles in which the Condorcet paradox occurs. We consider three candidates. We compute this fraction as follows: we find, for each number of voters `n`, the number of preference profiles in which a specific candidate is the Condorcet winner, multiply this number by `3` (since there are `3` possible Condorcet winners), and subtract this from the total number of preference profiles. Now we have the number of preference profiles in which the Condorcet paradox occurs. We divide this by the total number of preference profiles to get the fraction.
+
+```python
+from PyNormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
+import itertools
+import math
+import matplotlib.pyplot as plt
+
+candidates = [0, 1, 2]
+rankings = list(itertools.permutations(candidates))
+
+condorcet_winner = 0
+voter_count = {ranking: Variable() for ranking in rankings}
+
+margins = {}
+for x, y in itertools.combinations(candidates, 2):
+    # net number of voters who prefer x to y
+    margins[x, y] = sum(voter_count[ranking] for ranking in rankings if ranking.index(x) < ranking.index(y)) \
+        - sum(voter_count[ranking] for ranking in rankings if ranking.index(x) > ranking.index(y))
+
+inequalities = InequalitySystem()
+for ranking in rankings:
+    inequalities.add_inequality(voter_count[ranking] >= 0)
+for x in candidates:
+    if x == condorcet_winner:
+        continue
+    inequalities.add_inequality(margins[condorcet_winner, x] > 0)
+
+print(inequalities.as_normitz_input_file())
+
+quasipolynomial = inequalities.construct_homogeneous_cone().HilbertQuasiPolynomial()
+
+Ns = range(100)
+num_profiles = [math.comb(len(rankings) + n - 1, n) for n in Ns]
+num_profiles_with_condorcet_winner = [evaluate_quasipolynomial(quasipolynomial, n) for n in Ns]
+num_profiles_with_condorcet_paradox = [num_profiles[n] - 3 * num_profiles_with_condorcet_winner[n] for n in Ns]
+fraction_with_condorcet_paradox = [num_profiles_with_condorcet_paradox[n] / num_profiles[n] for n in Ns]
+
+plt.plot(Ns, fraction_with_condorcet_paradox)
+plt.xlabel('Number of voters')
+plt.ylabel('Fraction of profiles with Condorcet paradox')
+plt.savefig("condorcet.png", dpi=300)
+plt.show()
+```
+
 
 ## Explanation
 
