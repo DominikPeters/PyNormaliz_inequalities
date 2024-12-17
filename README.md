@@ -30,7 +30,7 @@ The main components are `Variable`s that can be combined into `Expression`s and 
 
 ### Example: Basic Usage
 
-Let's count the number of integer pairs `(a,b)` with `a + b = n` that satisfy the inequalities `a >= 0`, `b >= 0`, and `a + b >= 1`, as a function of `n`.
+Let's count the number of integer pairs `(a,b)` with `a + b = n` that satisfy the inequalities `a >= 0`, `b >= 0`, and `a >= b`, as a function of `n`.
 
 ```python
 from PyNormaliz_inequalities import Variable, InequalitySystem, evaluate_quasipolynomial
@@ -41,10 +41,35 @@ b = Variable()
 inequalities = InequalitySystem()
 inequalities.add_inequality(a >= 0)
 inequalities.add_inequality(b >= 0)
-inequalities.add_inequality(a + b >= 1)
+inequalities.add_inequality(a >= b)
 
 quasipolynomial = inequalities.construct_homogeneous_cone().HilbertQuasiPolynomial()
 print([evaluate_quasipolynomial(quasipolynomial, n) for n in range(10)])
+```
+Output: `[0, 1, 1, 2, 2, 3, 3, 4, 4, 5]`
+
+We can also output the resulting problem in the Normaliz input file format:
+
+```python
+with open("example.in", "w") as f:
+    f.write(inequalities.as_normitz_input_file())
+```
+This produces a file with the content
+```
+amb_space 2
+inequalities 3
+1 0
+0 1
+1 -1
+total_degree
+```
+This can then be passed to Normaliz by running `normaliz example.in`, which produces a file `example.out`.
+
+The package also supports grading:
+```python
+cone = inequalities.construct_homogeneous_cone(grading=a+3*b)
+with open("example.in", "w") as f:
+    f.write(inequalities.as_normitz_input_file(grading=a+3*b))
 ```
 
 ### Example: Condorcet Paradox
@@ -93,7 +118,7 @@ plt.ylabel('Fraction of profiles with Condorcet paradox')
 plt.savefig("condorcet.png", dpi=300)
 plt.show()
 ```
-
+<img src="https://github.com/user-attachments/assets/9e3b0239-2f3f-44ef-b6b6-fb7e0c606a87" width="500">
 
 ## Explanation
 
