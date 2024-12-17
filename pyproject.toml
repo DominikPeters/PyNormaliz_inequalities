@@ -12,3 +12,8 @@ authors = [
 license = { text = "MIT License" }
 dependencies = ["PyNormaliz"]
 readme = "README.md"
+
+
+[project.urls]
+Homepage = "https://github.com/DominikPeters/PyNormaliz_inequalities"
+Issues = "https://github.com/DominikPeters/PyNormaliz_inequalities/issues"
