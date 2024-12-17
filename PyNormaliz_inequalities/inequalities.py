@@ -239,6 +239,17 @@ class InequalitySystem:
             if all(ineq.is_satisfied_by(value) for ineq in self.inequalities):
                 num_points += 1
         return num_points
+    
+    def get_vec(self, expression: Expression) -> List[Union[int, float]]:
+        """Converts an expression to a vector representation."""
+        used_vars = sorted({var.id for ineq in self.inequalities for var in ineq.expr.coeffs})
+        vec = [0] * len(used_vars)
+        for i, var in enumerate(used_vars):
+            if var in expression.coeffs:
+                vec[i] = expression.coeffs[var]
+        if expression.constant:
+            vec.append(expression.constant)
+        return vec
 
     def get_vecs(self) -> List[List[Union[int, float]]]:
         """Converts inequalities to vector representation.
@@ -276,10 +287,14 @@ class InequalitySystem:
 
         return (weak_inequality_vecs, strict_inequality_vecs)
 
-    def construct_homogeneous_cone(self) -> Cone:
+    def construct_homogeneous_cone(self, grading: Expression = None) -> Cone:
         """Constructs a homogeneous cone as a PyNormaliz Cone object.
 
         Constructs a homogeneous cone from the given inequalities. The inequalities should be homogeneous.
+
+        Args:
+            grading (Expression, optional): An optional expression representing the grading. 
+            Defaults to the sum of all used variables ("total_degree").
 
         Returns:
             Cone: A PyNormaliz Cone object representing the homogeneous cone.
@@ -288,26 +303,41 @@ class InequalitySystem:
         # if not homogeneous:
         #     raise ValueError("Inequality system is not homogeneous")
 
+        if grading is not None and grading.constant:
+            raise ValueError("Grading constant must be zero")
+
         weak_inequality_vecs, strict_inequality_vecs = self.get_vecs()
         if homogeneous:
             num_vars = len((weak_inequality_vecs + strict_inequality_vecs)[0])
+            if grading is None:
+                grading = [[1] * num_vars]
+            else:
+                grading = [self.get_vec(grading)]
             return Cone(
                 inequalities=weak_inequality_vecs, 
                 excluded_faces=strict_inequality_vecs, 
-                grading=[[1] * num_vars]
+                grading=grading
             )
         else:
             num_vars = len((weak_inequality_vecs + strict_inequality_vecs)[0]) - 1
+            if grading is None:
+                grading = [[1] * num_vars]
+            else:
+                grading = [self.get_vec(grading)]
             return Cone(
                 inhom_inequalities=weak_inequality_vecs, 
                 inhom_excluded_faces=strict_inequality_vecs, 
-                grading=[[1] * num_vars]
+                grading=grading
             )
 
-    def as_normitz_input_file(self) -> str:
+    def as_normitz_input_file(self, grading: Expression = None) -> str:
         """Converts the inequality system to a string in Normaliz input file format.
 
         Converts the inequality system to a string in Normaliz input file format. The output can be used as input to the Normaliz command line tool.
+
+        Args:
+            grading (Expression, optional): An optional expression representing the grading. 
+            Defaults to the sum of all used variables ("total_degree").
 
         Returns:
             str: A string in Normaliz input file format.
@@ -351,7 +381,12 @@ class InequalitySystem:
         if contains_non_negativity_constraints:
             lines.append("nonnegative")
 
-        lines.append("total_degree") # grading = all 1s
+        if grading is not None:
+            grading = self.get_vec(grading)
+            lines.append(f"grading")
+            lines.append(" ".join(str(x) for x in grading))
+        else:
+            lines.append("total_degree") # grading = all 1s
 
         return "\n".join(lines)
 
